@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.StepOverButton = new System.Windows.Forms.Button();
@@ -35,18 +37,18 @@
             this.StepRunButton = new System.Windows.Forms.Button();
             this.RunButton = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.SourceCodeRichTextBox = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();
             this.OutputRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
             this.VariablesRichTextBox = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.label3 = new System.Windows.Forms.Label();
             this.StackTraceRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.SourceCodeFastColoredTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -64,6 +66,7 @@
             this.splitContainer3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SourceCodeFastColoredTextBox)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -143,6 +146,7 @@
             this.RunButton.TabIndex = 0;
             this.RunButton.Text = "Run";
             this.RunButton.UseVisualStyleBackColor = true;
+            this.RunButton.Click += new System.EventHandler(this.RunButton_Click);
             // 
             // splitContainer1
             // 
@@ -153,7 +157,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.SourceCodeRichTextBox);
+            this.splitContainer1.Panel1.Controls.Add(this.SourceCodeFastColoredTextBox);
             // 
             // splitContainer1.Panel2
             // 
@@ -161,15 +165,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(745, 436);
             this.splitContainer1.SplitterDistance = 248;
             this.splitContainer1.TabIndex = 1;
-            // 
-            // SourceCodeRichTextBox
-            // 
-            this.SourceCodeRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SourceCodeRichTextBox.Location = new System.Drawing.Point(0, 0);
-            this.SourceCodeRichTextBox.Name = "SourceCodeRichTextBox";
-            this.SourceCodeRichTextBox.Size = new System.Drawing.Size(745, 248);
-            this.SourceCodeRichTextBox.TabIndex = 0;
-            this.SourceCodeRichTextBox.Text = "";
             // 
             // splitContainer2
             // 
@@ -203,23 +198,6 @@
             this.tableLayoutPanel3.Size = new System.Drawing.Size(248, 184);
             this.tableLayoutPanel3.TabIndex = 2;
             // 
-            // splitContainer3
-            // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Name = "splitContainer3";
-            // 
-            // splitContainer3.Panel1
-            // 
-            this.splitContainer3.Panel1.Controls.Add(this.tableLayoutPanel4);
-            // 
-            // splitContainer3.Panel2
-            // 
-            this.splitContainer3.Panel2.Controls.Add(this.tableLayoutPanel5);
-            this.splitContainer3.Size = new System.Drawing.Size(493, 184);
-            this.splitContainer3.SplitterDistance = 253;
-            this.splitContainer3.TabIndex = 0;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -240,6 +218,23 @@
             this.OutputRichTextBox.Size = new System.Drawing.Size(242, 151);
             this.OutputRichTextBox.TabIndex = 1;
             this.OutputRichTextBox.Text = "";
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.tableLayoutPanel4);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.tableLayoutPanel5);
+            this.splitContainer3.Size = new System.Drawing.Size(493, 184);
+            this.splitContainer3.SplitterDistance = 253;
+            this.splitContainer3.TabIndex = 0;
             // 
             // tableLayoutPanel4
             // 
@@ -314,6 +309,37 @@
             this.StackTraceRichTextBox.TabIndex = 1;
             this.StackTraceRichTextBox.Text = "";
             // 
+            // SourceCodeFastColoredTextBox
+            // 
+            this.SourceCodeFastColoredTextBox.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.SourceCodeFastColoredTextBox.AutoScrollMinSize = new System.Drawing.Size(27, 14);
+            this.SourceCodeFastColoredTextBox.BackBrush = null;
+            this.SourceCodeFastColoredTextBox.CharHeight = 14;
+            this.SourceCodeFastColoredTextBox.CharWidth = 8;
+            this.SourceCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.SourceCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.SourceCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SourceCodeFastColoredTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.SourceCodeFastColoredTextBox.IsReplaceMode = false;
+            this.SourceCodeFastColoredTextBox.Location = new System.Drawing.Point(0, 0);
+            this.SourceCodeFastColoredTextBox.Name = "SourceCodeFastColoredTextBox";
+            this.SourceCodeFastColoredTextBox.Paddings = new System.Windows.Forms.Padding(0);
+            this.SourceCodeFastColoredTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.SourceCodeFastColoredTextBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("SourceCodeFastColoredTextBox.ServiceColors")));
+            this.SourceCodeFastColoredTextBox.Size = new System.Drawing.Size(745, 248);
+            this.SourceCodeFastColoredTextBox.TabIndex = 0;
+            this.SourceCodeFastColoredTextBox.Zoom = 100;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -342,6 +368,7 @@
             this.tableLayoutPanel4.PerformLayout();
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SourceCodeFastColoredTextBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -355,7 +382,6 @@
         private System.Windows.Forms.Button StepRunButton;
         private System.Windows.Forms.Button RunButton;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.RichTextBox SourceCodeRichTextBox;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
@@ -367,6 +393,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.RichTextBox StackTraceRichTextBox;
+        private FastColoredTextBoxNS.FastColoredTextBox SourceCodeFastColoredTextBox;
     }
 }
 
