@@ -6,25 +6,41 @@ using System.Threading.Tasks;
 
 namespace GuuInterpretator
 {
-    class InnerView
+    public class InnerView
+    {
+        public Dictionary<string, int> Variables { get; set; }
+        public Dictionary<string, List<Instruction>> Functions { get; set; }
+
+        public InnerView()
+        {
+            Variables = new Dictionary<string, int>();
+            Functions = new Dictionary<string, List<Instruction>>();
+        }
+    }
+
+    class InnerViewBuilder
     {
         private Lexer mLexer;
         private Lex mCurrentLex;
 
-        public List<string> Variables { get; set; }
-        public List<string> ExpectToDefVars { get; set; }
-        public Dictionary<string, List<Instruction>> Functions { get; set; }
-        public List<string> ExpectToDefFuncs { get; set; }
+        private string mCurrentFunction;
+
+        private List<string> ExpectToDefVars { get; set; }
+        private List<string> ExpectToDefFuncs { get; set; }
+
+        private InnerView mInnerView;
         
-        public InnerView(string sourceCode)
+        public InnerViewBuilder(string sourceCode)
         {
             mLexer = new Lexer(sourceCode);
-            Variables = new List<string>();
             ExpectToDefVars = new List<string>();
-
-            Functions = new Dictionary<string, List<Instruction>>();
             ExpectToDefFuncs = new List<string>();
+            mInnerView = new InnerView();
 
+        }
+
+        public InnerView Build()
+        {
             mCurrentLex = mLexer.GetLex();
             while (mCurrentLex != null)
             {
@@ -33,7 +49,7 @@ namespace GuuInterpretator
 
             CheckExpectedDefList(ExpectToDefVars);
             CheckExpectedDefList(ExpectToDefFuncs);
-
+            return mInnerView;
         }
 
 
@@ -43,18 +59,18 @@ namespace GuuInterpretator
 
             mCurrentLex = mLexer.GetLex();
             CheckLexType(mCurrentLex, LexTypes.INDENT);
-            if (Functions.ContainsKey(mCurrentLex.Value))
+            if (mInnerView.Functions.ContainsKey(mCurrentLex.Value))
             {
                 throw new Exception("Redeclare function " 
                     + mCurrentLex.Value + ".");
             }
-            Functions.Add(mCurrentLex.Value, new List<Instruction>());
+            mInnerView.Functions.Add(mCurrentLex.Value, new List<Instruction>());
+            mCurrentFunction = mCurrentLex.Value;
+
             if (ExpectToDefFuncs.Contains(mCurrentLex.Value))
                 ExpectToDefFuncs.Remove(mCurrentLex.Value);
 
-            mCurrentLex = mLexer.GetLex();
-            CheckLexType(mCurrentLex, LexTypes.ENDLINE);
-            mCurrentLex = mLexer.GetLex();
+            EndLine();
 
             FuncBody();
         }
@@ -102,48 +118,57 @@ namespace GuuInterpretator
             CheckLexType(mCurrentLex, LexTypes.DIGIT);
             int val = Int32.Parse(mCurrentLex.Value);
 
-            if (!Variables.Contains(varName))
+            if (!mInnerView.Variables.ContainsKey(varName))
             {
-                Variables.Add(varName);
+                mInnerView.Variables.Add(varName,0);
                 if (ExpectToDefVars.Contains(varName))
                     ExpectToDefVars.Remove(varName);
             }
 
-            mCurrentLex = mLexer.GetLex();
-            CheckLexType(mCurrentLex, LexTypes.ENDLINE);
-            mCurrentLex = mLexer.GetLex();
+            mInnerView.Functions[mCurrentFunction]
+                .Add(new SetInst(varName, val, mCurrentLex.LineNo));
+
+            EndLine();
         }
 
         private void Print()
         {
             mCurrentLex = mLexer.GetLex();
             CheckLexType(mCurrentLex, LexTypes.INDENT);
-            if (!Variables.Contains(mCurrentLex.Value))
+            if (!mInnerView.Variables.ContainsKey(mCurrentLex.Value))
             {
                 if (!ExpectToDefVars.Contains(mCurrentLex.Value))
                     ExpectToDefVars.Add(mCurrentLex.Value);
             }
-            mCurrentLex = mLexer.GetLex();
-            CheckLexType(mCurrentLex, LexTypes.ENDLINE);
-            mCurrentLex = mLexer.GetLex();
+
+            mInnerView.Functions[mCurrentFunction]
+                .Add(new PrintInst(mCurrentLex.Value, mCurrentLex.LineNo));
+
+            EndLine();
         }
 
         private void Call()
         {
             mCurrentLex = mLexer.GetLex();
             CheckLexType(mCurrentLex, LexTypes.INDENT);
-            if (!Functions.ContainsKey(mCurrentLex.Value))
+            if (!mInnerView.Functions.ContainsKey(mCurrentLex.Value))
             {
                 if (!ExpectToDefFuncs.Contains(mCurrentLex.Value))
                     ExpectToDefFuncs.Add(mCurrentLex.Value);
             }
 
+            mInnerView.Functions[mCurrentFunction]
+                .Add(new CallInst(mCurrentLex.Value, mCurrentLex.LineNo));
+
+            EndLine();
+        }
+
+        private void EndLine()
+        {
             mCurrentLex = mLexer.GetLex();
             CheckLexType(mCurrentLex, LexTypes.ENDLINE);
             mCurrentLex = mLexer.GetLex();
         }
-
-
 
         private void CheckExpectedDefList(List<String> list)
         {
@@ -187,7 +212,5 @@ namespace GuuInterpretator
         }
     }
 
-    public class Instruction
-    {
-    }
+
 }
