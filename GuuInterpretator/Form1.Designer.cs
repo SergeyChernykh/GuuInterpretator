@@ -49,6 +49,7 @@
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.label3 = new System.Windows.Forms.Label();
             this.StackTraceRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.StopButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -94,6 +95,7 @@
             this.tableLayoutPanel2.Controls.Add(this.StepIntoButton, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.StepRunButton, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.RunButton, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.StopButton, 0, 4);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -102,8 +104,8 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 122F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 93F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(43, 436);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
@@ -186,6 +188,7 @@
             this.SourceCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.SourceCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.SourceCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SourceCodeFastColoredTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.SourceCodeFastColoredTextBox.IsReplaceMode = false;
             this.SourceCodeFastColoredTextBox.Location = new System.Drawing.Point(0, 0);
             this.SourceCodeFastColoredTextBox.Name = "SourceCodeFastColoredTextBox";
@@ -339,6 +342,17 @@
             this.StackTraceRichTextBox.TabIndex = 1;
             this.StackTraceRichTextBox.Text = "";
             // 
+            // StopButton
+            // 
+            this.StopButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StopButton.Location = new System.Drawing.Point(3, 163);
+            this.StopButton.Name = "StopButton";
+            this.StopButton.Size = new System.Drawing.Size(37, 34);
+            this.StopButton.TabIndex = 4;
+            this.StopButton.Text = "Stop";
+            this.StopButton.UseVisualStyleBackColor = true;
+            this.StopButton.Click += new System.EventHandler(this.StopButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -347,7 +361,6 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Form1";
             this.Text = "GuuInterpretator";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -394,6 +407,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.RichTextBox StackTraceRichTextBox;
         private FastColoredTextBoxNS.FastColoredTextBox SourceCodeFastColoredTextBox;
+        private System.Windows.Forms.Button StopButton;
     }
 }
 

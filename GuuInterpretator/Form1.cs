@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,8 +15,7 @@ namespace GuuInterpretator
 {
     public partial class Form1 : Form
     {
-        TextWriter _writer = null;
-
+        CancellationTokenSource _tokenSource;
         public Form1()
         {
             InitializeComponent();
@@ -23,7 +23,7 @@ namespace GuuInterpretator
             SourceCodeFastColoredTextBox.Text = "sub main\n\tset a 1\n\tcall foo\n\tprint a\nsub foo\n\tset a 2";
         }
 
-        private void RunButton_Click(object sender, EventArgs e)
+        private async void RunButton_Click(object sender, EventArgs e)
         {
             OutputRichTextBox.Clear();
             //Lexer lexer = new Lexer(SourceCodeFastColoredTextBox.Text);
@@ -34,23 +34,20 @@ namespace GuuInterpretator
             //    lex = lexer.GetLex();
             //}
 
-            try
-            {
-                InnerViewBuilder innerViewBuilder = new InnerViewBuilder(SourceCodeFastColoredTextBox.Text);
-                InnerView innerView = innerViewBuilder.Build();
-                Executer executer = new Executer(OutputRichTextBox, innerView);
-                executer.Execute();
-            }
-            catch (Exception exp)
-            {
-                OutputRichTextBox.Text = exp.Message;
-            }
+            InnerViewBuilder innerViewBuilder = new InnerViewBuilder(SourceCodeFastColoredTextBox.Text);
+            InnerView innerView = innerViewBuilder.Build();
+            Executer executer = new Executer(innerView);
+
+            _tokenSource = new CancellationTokenSource();
+            CancellationToken cancelToken = _tokenSource.Token;
+
+            OutputRichTextBox.Text += await Task.Run(() => executer.Execute(cancelToken), cancelToken);
+
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void StopButton_Click(object sender, EventArgs e)
         {
-            _writer = new TextBoxStreamWriter(OutputRichTextBox);
-            Console.SetOut(_writer);
+            _tokenSource.Cancel();
         }
     }
 }

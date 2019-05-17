@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -9,34 +10,57 @@ namespace GuuInterpretator
 {
     class Executer
     {
-        RichTextBox mOutputRichTextBox;
         InnerView mInnerView;
         Stack<Range> mStackTrace;
+        String mOutput;
+        CancellationToken mCancelToken;
 
-
-        public Executer(RichTextBox output, InnerView innerView)
+        public Executer(InnerView innerView)
         {
-            mOutputRichTextBox = output;
             mInnerView = innerView;
             mStackTrace = new Stack<Range>();
         }
 
-        public void Execute()
+        public string Execute(CancellationToken cancelToken)
         {
             if (!mInnerView.Functions.ContainsKey("main"))
                 throw new Exception("main is missing.");
-            ExecuteFuncion("main");
-            
+            mCancelToken = cancelToken;
+            try
+            {
+                ExecuteFuncion("main");
+
+                mCancelToken.ThrowIfCancellationRequested();
+            }
+            catch (OperationCanceledException)
+            {
+                mOutput += "Cancel\n";
+            }
+            catch (Exception e)
+            {
+                mOutput += $"{e.Message}\n";
+            }
+           return mOutput;
+           
         }
 
         private void ExecuteFuncion(string funcName)
         {
-            mStackTrace.Push(
-                new Range {
-                    FuncName = funcName,
-                    LineNo = mInnerView.Functions[funcName].First().LineNo
-                }
-            );
+            try
+            {
+                mStackTrace.Push(
+                    new Range
+                    {
+                        FuncName = funcName,
+                        LineNo = mInnerView.Functions[funcName].First().LineNo
+                    }
+                );
+            }
+            catch(Exception e)
+            {
+                mOutput += $"{e.Message}";
+                throw new Exception();
+            }
 
             foreach (var inst in mInnerView.Functions[funcName])
             {
@@ -56,6 +80,8 @@ namespace GuuInterpretator
                     default:
                         throw new Exception("Unexpected instruction.");
                 }
+                mCancelToken.ThrowIfCancellationRequested();
+                
             }
 
             mStackTrace.Pop();
@@ -76,8 +102,9 @@ namespace GuuInterpretator
         private void ExecutePrint(Instruction inst)
         {
             PrintInst printInst = (PrintInst)inst;
-            Console.Write(printInst.Variable 
-                + "=" + mInnerView.Variables[printInst.Variable]+"\n");
+
+            mOutput += printInst.Variable
+                + "=" + mInnerView.Variables[printInst.Variable] + "\n";
         }
     }
 
