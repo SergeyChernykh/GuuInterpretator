@@ -36,6 +36,7 @@
             this.StepIntoButton = new System.Windows.Forms.Button();
             this.StepRunButton = new System.Windows.Forms.Button();
             this.RunButton = new System.Windows.Forms.Button();
+            this.StopButton = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.SourceCodeFastColoredTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -49,7 +50,6 @@
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.label3 = new System.Windows.Forms.Label();
             this.StackTraceRichTextBox = new System.Windows.Forms.RichTextBox();
-            this.StopButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -99,35 +99,40 @@
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 6;
+            this.tableLayoutPanel2.RowCount = 7;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 93F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(43, 436);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // StepOverButton
             // 
             this.StepOverButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StepOverButton.Enabled = false;
             this.StepOverButton.Location = new System.Drawing.Point(3, 123);
             this.StepOverButton.Name = "StepOverButton";
             this.StepOverButton.Size = new System.Drawing.Size(37, 34);
             this.StepOverButton.TabIndex = 3;
             this.StepOverButton.Text = "Step over";
             this.StepOverButton.UseVisualStyleBackColor = true;
+            this.StepOverButton.Click += new System.EventHandler(this.StepOverButton_Click);
             // 
             // StepIntoButton
             // 
             this.StepIntoButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StepIntoButton.Enabled = false;
             this.StepIntoButton.Location = new System.Drawing.Point(3, 83);
             this.StepIntoButton.Name = "StepIntoButton";
             this.StepIntoButton.Size = new System.Drawing.Size(37, 34);
             this.StepIntoButton.TabIndex = 2;
             this.StepIntoButton.Text = "Step into";
             this.StepIntoButton.UseVisualStyleBackColor = true;
+            this.StepIntoButton.Click += new System.EventHandler(this.StepIntoButton_Click);
             // 
             // StepRunButton
             // 
@@ -138,6 +143,7 @@
             this.StepRunButton.TabIndex = 1;
             this.StepRunButton.Text = "Step run";
             this.StepRunButton.UseVisualStyleBackColor = true;
+            this.StepRunButton.Click += new System.EventHandler(this.StepRunButton_Click);
             // 
             // RunButton
             // 
@@ -149,6 +155,18 @@
             this.RunButton.Text = "Run";
             this.RunButton.UseVisualStyleBackColor = true;
             this.RunButton.Click += new System.EventHandler(this.RunButton_Click);
+            // 
+            // StopButton
+            // 
+            this.StopButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StopButton.Enabled = false;
+            this.StopButton.Location = new System.Drawing.Point(3, 163);
+            this.StopButton.Name = "StopButton";
+            this.StopButton.Size = new System.Drawing.Size(37, 34);
+            this.StopButton.TabIndex = 4;
+            this.StopButton.Text = "Stop";
+            this.StopButton.UseVisualStyleBackColor = true;
+            this.StopButton.Click += new System.EventHandler(this.StopButton_Click);
             // 
             // splitContainer1
             // 
@@ -188,7 +206,6 @@
             this.SourceCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.SourceCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.SourceCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SourceCodeFastColoredTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.SourceCodeFastColoredTextBox.IsReplaceMode = false;
             this.SourceCodeFastColoredTextBox.Location = new System.Drawing.Point(0, 0);
             this.SourceCodeFastColoredTextBox.Name = "SourceCodeFastColoredTextBox";
@@ -341,17 +358,6 @@
             this.StackTraceRichTextBox.Size = new System.Drawing.Size(230, 151);
             this.StackTraceRichTextBox.TabIndex = 1;
             this.StackTraceRichTextBox.Text = "";
-            // 
-            // StopButton
-            // 
-            this.StopButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.StopButton.Location = new System.Drawing.Point(3, 163);
-            this.StopButton.Name = "StopButton";
-            this.StopButton.Size = new System.Drawing.Size(37, 34);
-            this.StopButton.TabIndex = 4;
-            this.StopButton.Text = "Stop";
-            this.StopButton.UseVisualStyleBackColor = true;
-            this.StopButton.Click += new System.EventHandler(this.StopButton_Click);
             // 
             // Form1
             // 

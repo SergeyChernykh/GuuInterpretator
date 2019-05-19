@@ -77,9 +77,6 @@ namespace GuuInterpretator
 
         private void FuncBody()
         {
-            if (mCurrentLex == null || mCurrentLex.Type == LexTypes.SUB)
-                throw new Exception("Function body is empty.");
-
             while (mCurrentLex != null && mCurrentLex.Type != LexTypes.SUB)
             {
                 switch (mCurrentLex.Type)
@@ -105,6 +102,10 @@ namespace GuuInterpretator
                            SyntaxisErrorMessageInOper(mCurrentLex)
                         );
                 }
+            }
+            if (mInnerView.Functions[mCurrentFunction].Count == 0)
+            {
+                throw new Exception($"{mCurrentFunction}'s body is empty.");
             }
         }
 

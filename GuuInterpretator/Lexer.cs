@@ -58,6 +58,20 @@ namespace GuuInterpretator
 
         public Lex GetLex()
         {
+            Lex lex = GetNewLex();
+            if (lex == null)
+            {
+                for (int i = 0; i < mSourseCodeByStrings.Length; ++i)
+                {
+                    mSourseCodeByStrings[i] = null;
+                }
+                mSourseCodeByStrings = null;
+            }
+            return lex;
+        }
+
+        private Lex GetNewLex()
+        {
             if (mSourseCodeByStrings == null)
                 return null;
             if (mCurrentString >= mSourseCodeByStrings.Length)
@@ -70,22 +84,31 @@ namespace GuuInterpretator
                 mCurrentString++;
                 mCurrentWord = 0;
 
-                return new Lex {
+                return new Lex
+                {
                     Type = LexTypes.ENDLINE,
-                    Value ="\n",
+                    Value = "\n",
                     LineNo = mCurrentString
                 };
             }
             while (mSourseCodeByStrings[mCurrentString].Length == 0)
-            { 
+            {
                 mCurrentString++;
                 mCurrentWord = 0;
                 if (mCurrentString >= mSourseCodeByStrings.Length)
                     return null;
-                
-            }
-                
 
+            }
+
+            Lex lex = BuildNewLex();
+
+            mCurrentWord++;
+
+            return lex;
+        }
+
+        private Lex BuildNewLex()
+        {
             Lex lex = new Lex();
 
             string word = mSourseCodeByStrings[mCurrentString][mCurrentWord];
@@ -107,7 +130,8 @@ namespace GuuInterpretator
                     if (isDigit(word))
                     {
                         lex.Type = LexTypes.DIGIT;
-                    } else if (isIdent(word))
+                    }
+                    else if (isIdent(word))
                     {
                         lex.Type = LexTypes.INDENT;
                     }
@@ -115,16 +139,13 @@ namespace GuuInterpretator
                     {
                         lex.Type = LexTypes.ERROR;
                         throw new Exception("Unexpected lexem " + word +
-                            " in line " + (mCurrentString+1) +".");
+                            " in line " + (mCurrentString + 1) + ".");
                     }
-                
+
                     break;
             }
             lex.Value = word;
-            lex.LineNo = mCurrentString+1;
-
-            mCurrentWord++;
-            
+            lex.LineNo = mCurrentString + 1;
             return lex;
         }
 
