@@ -12,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace GuuInterpretator
+namespace GuuInterpreter 
 {
     public partial class Form1 : Form
     {
@@ -24,23 +24,24 @@ namespace GuuInterpretator
         public Form1()
         {
             InitializeComponent();
-
-            SourceCodeFastColoredTextBox.Text = "sub main\n\tset a 1\n\tcall foo\n\tprint a\nsub foo\n\tset a 2";
         }
 
+        //выполнение программы
         private async void RunButton_Click(object sender, EventArgs e)
         {
             OutputRichTextBox.Clear();
-
             try
             {
+                
                 using (Executer = new Executer(SourceCodeFastColoredTextBox.Text))
                 {
                     using (TokenSource = new CancellationTokenSource())
                     {
                         StopButton.Enabled = true;
                         RunButton.Enabled = false;
+                        //нужен для остановки выполнения программы
                         CancellationToken cancelToken = TokenSource.Token;
+                        //запускаем выполнение программы в отдельной задаче
                         OutputRichTextBox.Text += await Task.Run(() => Executer.Execute(cancelToken), cancelToken);
                         StopButton.Enabled = false;
                         RunButton.Enabled = true;
@@ -52,9 +53,9 @@ namespace GuuInterpretator
             {
                 OutputRichTextBox.Text += exp.Message;
             }
-
         }
 
+        //запуск пошагового выполнения программы
         private void StepRunButton_Click(object sender, EventArgs e)
         {
             try
@@ -64,11 +65,14 @@ namespace GuuInterpretator
                 StepRunButton.Enabled = false;
                 RunButton.Enabled = false;
                 StopButton.Enabled = true;
+
                 Executer = new Executer(SourceCodeFastColoredTextBox.Text);
+
                 StepIntoButton.Enabled = true;
                 StepOverButton.Enabled = true;
-                int line = Executer.FindMain().LineNo - 1;
-                ChangeLineColor(line);
+
+                //выделяем первую строку в main
+                ChangeLineColor(Executer.FindMain().LineNo - 1);
             }
             catch (Exception exp)
             {
@@ -76,39 +80,45 @@ namespace GuuInterpretator
             }
         }
 
-        private void StopButton_Click(object sender, EventArgs e)
-        {
-            TokenSource?.Cancel();
-            EndOfStepExecute();
-        }
-
+        //шаг с заходом
         private void StepIntoButton_Click(object sender, EventArgs e)
         {
             OneStep(true);
         }
 
+        //шаг с обходом
         private void StepOverButton_Click(object sender, EventArgs e)
         {
             OneStep(false);
         }
 
+        //выполнение шага
         private async void OneStep(bool stepInto)
         {
             try
             {
                 using (TokenSource = new CancellationTokenSource())
                 {
+                    //нужен для остановки выполнения программы
                     CancellationToken cancelToken = TokenSource.Token;
-                    OutputMessage message = await Task.Run(() => Executer.ExecuteNextInst(stepInto, cancelToken), cancelToken);
+                    //запускаем выполнение инструкции в отдельной задаче
+                    OutputMessage message = await Task.Run(() => Executer.ExecuteCurrentInst(stepInto, cancelToken), cancelToken);
 
+                    //выделение следующей инструкции
                     int line = message.LineNo - 1;
                     ChangeLineColor(line);
-                    OutputRichTextBox.Text += message.Output;
+                    
+                    //вывод информации
+                    OutputRichTextBox.Text = message.Output;
                     StackTraceRichTextBox.Text = message.StackTrace;
                     VariablesRichTextBox.Text = message.Variables;
+
+                    
                     if (line < 0)
                     {
-                        EndOfStepExecute();
+                        //была выполнена последняя инструкция
+                        EndExecute();
+                        Executer.Dispose();
                     }
                 }
                 TokenSource = null;
@@ -116,11 +126,20 @@ namespace GuuInterpretator
             catch (Exception e)
             {
                 OutputRichTextBox.Text += e.Message;
-                EndOfStepExecute();
+                EndExecute();
+                Executer.Dispose();
             }
         }
 
-        private void EndOfStepExecute()
+        //остановка выполнения
+        private void StopButton_Click(object sender, EventArgs e)
+        {
+            TokenSource?.Cancel();
+            EndExecute();
+        }
+
+        //остановка выполнения
+        private void EndExecute()
         {
             ChangeLineColor(-1);
             StepIntoButton.Enabled = false;
@@ -129,10 +148,10 @@ namespace GuuInterpretator
             StepRunButton.Enabled = true;
             RunButton.Enabled = true;
             SourceCodeFastColoredTextBox.Enabled = true;
-            Executer.Dispose();
             return;
         }
 
+        //выделение инструкции
         private void ChangeLineColor(int line)
         {
             PreviusRange?.ClearStyle(lineStyle);

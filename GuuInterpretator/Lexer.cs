@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GuuInterpretator
+namespace GuuInterpreter 
 {
 
     enum LexTypes
@@ -33,7 +33,8 @@ namespace GuuInterpretator
 
     class Lexer
     {
-        private string[][] mSourseCodeByStrings;
+        //хранение исходного текста по словам
+        private string[][] mSourseCodeByWord;
         int mCurrentString;
         int mCurrentWord;
 
@@ -42,12 +43,11 @@ namespace GuuInterpretator
             sourceCode = sourceCode.Replace("\r\n", "\n");
             string[] strs = sourceCode.Split('\n');
            
-
-            mSourseCodeByStrings = new string[strs.Length][];
+            mSourseCodeByWord = new string[strs.Length][];
             int i = 0;
             foreach (string str in strs)
             {
-                mSourseCodeByStrings[i++] = str.Split(' ')
+                mSourseCodeByWord[i++] = str.Split(' ')
                     .Where(it => !String.IsNullOrEmpty(it))
                     .ToArray();
             }
@@ -61,25 +61,25 @@ namespace GuuInterpretator
             Lex lex = GetNewLex();
             if (lex == null)
             {
-                for (int i = 0; i < mSourseCodeByStrings.Length; ++i)
+                for (int i = 0; i < mSourseCodeByWord.Length; ++i)
                 {
-                    mSourseCodeByStrings[i] = null;
+                    mSourseCodeByWord[i] = null;
                 }
-                mSourseCodeByStrings = null;
+                mSourseCodeByWord = null;
             }
             return lex;
         }
 
         private Lex GetNewLex()
         {
-            if (mSourseCodeByStrings == null)
+            if (mSourseCodeByWord == null)
                 return null;
-            if (mCurrentString >= mSourseCodeByStrings.Length)
+            if (mCurrentString >= mSourseCodeByWord.Length)
                 return null;
-            if (mCurrentString == mSourseCodeByStrings.Length
-                && mCurrentWord >= mSourseCodeByStrings.Last().Length)
+            if (mCurrentString == mSourseCodeByWord.Length
+                && mCurrentWord >= mSourseCodeByWord.Last().Length)
                 return null;
-            if (mCurrentWord >= mSourseCodeByStrings[mCurrentString].Length)
+            if (mCurrentWord >= mSourseCodeByWord[mCurrentString].Length)
             {
                 mCurrentString++;
                 mCurrentWord = 0;
@@ -91,11 +91,11 @@ namespace GuuInterpretator
                     LineNo = mCurrentString
                 };
             }
-            while (mSourseCodeByStrings[mCurrentString].Length == 0)
+            while (mSourseCodeByWord[mCurrentString].Length == 0)
             {
                 mCurrentString++;
                 mCurrentWord = 0;
-                if (mCurrentString >= mSourseCodeByStrings.Length)
+                if (mCurrentString >= mSourseCodeByWord.Length)
                     return null;
 
             }
@@ -111,7 +111,7 @@ namespace GuuInterpretator
         {
             Lex lex = new Lex();
 
-            string word = mSourseCodeByStrings[mCurrentString][mCurrentWord];
+            string word = mSourseCodeByWord[mCurrentString][mCurrentWord];
             switch (word)
             {
                 case "sub":

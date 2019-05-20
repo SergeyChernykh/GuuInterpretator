@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace GuuInterpretator
+namespace GuuInterpreter 
 {
     class Executer : IDisposable
     {
@@ -20,6 +20,7 @@ namespace GuuInterpretator
 
         public Executer(String sourceCode)
         {
+            //создание внуреннего представления
             mInnerView = new InnerViewBuilder(sourceCode).Build();
             if (!mInnerView.Functions.ContainsKey("main"))
                 throw new Exception("main is missing.");
@@ -30,6 +31,7 @@ namespace GuuInterpretator
             mOutputMessage = new OutputMessage();
         }
 
+        //выполнение всей программы
         public string Execute(CancellationToken cancelToken)
         {
             mOutputMessage.Output = "";
@@ -50,10 +52,12 @@ namespace GuuInterpretator
             {
                 mOutputMessage.Output += $"{e.Message}\n";
             }
+
            return mOutputMessage.Output;
            
         }
 
+        //выполнение функции
         private void ExecuteFuncion(string funcName)
         {
             foreach (var inst in mInnerView.Functions[funcName])
@@ -63,6 +67,7 @@ namespace GuuInterpretator
              mStackTrace.Pop();
         }
 
+        //дополнение функции в стек вызовов
         private void PushNewFuncIntoStack(string funcName, int currInstNo = -1)
         {
             if (mStackTrace.Count >= 3000)
@@ -79,9 +84,9 @@ namespace GuuInterpretator
             );
         }
 
+        //выполнение инструкции
         private void ExecuteInstruction(Instruction inst)
         {
-            Thread.Sleep(500);
             switch (inst.Type)
             {
                 case InstType.PRINT:
@@ -101,19 +106,22 @@ namespace GuuInterpretator
             mCancelToken.ThrowIfCancellationRequested();
         }
 
+        //выполнение инструкции call
         private void ExecuteCall(Instruction inst)
         {
             CallInst callInst = (CallInst)inst;
             PushNewFuncIntoStack(callInst.CallerFunc);
             ExecuteFuncion(callInst.CallerFunc);
         }
-
+        
+        //выполнение инструкции set
         private void ExecuteSet(Instruction inst)
         {
             SetInst setInst = (SetInst)inst;
             mInnerView.Variables[setInst.Variable] = setInst.Value;
         }
 
+        //выполнение инструкции print
         private void ExecutePrint(Instruction inst)
         {
             PrintInst printInst = (PrintInst)inst;
@@ -121,13 +129,15 @@ namespace GuuInterpretator
                 + "=" + mInnerView.Variables[printInst.Variable] + "\n";
         }
 
-        public OutputMessage ExecuteNextInst(bool stepInto, CancellationToken cancellationToken)
+        //выполнение текущей инструкции
+        public OutputMessage ExecuteCurrentInst(bool stepInto, CancellationToken cancellationToken)
         {
             mCancelToken = cancellationToken;
             try
             {
                 if (stepInto && mCurrentInst.Type == InstType.CALL)
                 {
+                    //выполнение вызова с заходом
                     CallInst callInst = (CallInst)mCurrentInst;
                     PushNewFuncIntoStack(callInst.CallerFunc, mCurrentInstNo);
                     mCurrentFunc = callInst.CallerFunc;
@@ -135,41 +145,34 @@ namespace GuuInterpretator
                 }
                 else
                 {
+                    //выполнение инструкции
                     ExecuteInstruction(mCurrentInst);
                 }
                 mCurrentInstNo++;
-                if (mInnerView.Functions[mCurrentFunc].Count <= mCurrentInstNo)
+
+                
+                if (mInnerView.Functions[mCurrentFunc].Length <= mCurrentInstNo)
                 {
-                    if (mStackTrace.Peek().FuncName != "main")
+                    //последняя инструкция функции выполнена
+                    if (mStackTrace.Count != 1)
                     {
+                        //возвращение из функции
                         mCurrentInstNo = mStackTrace.Pop().InstNo + 1;
                         mCurrentFunc = mStackTrace.Peek().FuncName;
                     }
                     else
                     {
+                        //завершение работы программы
                         mOutputMessage.LineNo = -1;
                         return mOutputMessage;
                     }
                 }
                 mCurrentInst = mInnerView.Functions[mCurrentFunc][mCurrentInstNo];
-                StackTraceItem stackItem = mStackTrace.Pop();
-                stackItem.LineNo = mCurrentInst.LineNo;
-                mStackTrace.Push(stackItem);
 
-                string stackTrace = "";
-                foreach (var item in mStackTrace)
-                {
-                    stackTrace += item.ToString();
-                }
+                mStackTrace.Peek().LineNo = mCurrentInst.LineNo;
 
-                string variables = "";
-                foreach (var item in mInnerView.Variables)
-                {
-                    variables += $"{item.Key} = {item.Value}\n";
-                }
-                mOutputMessage.LineNo = mCurrentInst.LineNo;
-                mOutputMessage.StackTrace = stackTrace;
-                mOutputMessage.Variables = variables;
+                //заполнение вывода
+                FillOutputMessage();
             }
             catch (OperationCanceledException)
             {
@@ -179,14 +182,36 @@ namespace GuuInterpretator
             {
                 mOutputMessage.Output += $"{e.Message}\n";
             }
+
             return mOutputMessage;
         }
 
+        //заполнение вывода
+        private void FillOutputMessage()
+        {
+            string stackTrace = "";
+            foreach (var item in mStackTrace)
+            {
+                stackTrace += item.ToString();
+            }
+
+            string variables = "";
+            foreach (var item in mInnerView.Variables)
+            {
+                variables += $"{item.Key} = {item.Value}\n";
+            }
+            mOutputMessage.LineNo = mCurrentInst.LineNo;
+            mOutputMessage.StackTrace = stackTrace;
+            mOutputMessage.Variables = variables;
+        }
+
+        //поиск номера строки функции main
         public OutputMessage FindMain()
         {
             PushNewFuncIntoStack("main");
             return new OutputMessage { LineNo = mCurrentInst.LineNo };
         }
+
         public void Dispose()
         {
             mStackTrace.Clear();

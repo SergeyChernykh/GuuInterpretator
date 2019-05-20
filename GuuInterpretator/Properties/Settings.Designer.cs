@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GuuInterpretator.Properties
+namespace GuuInterpreter .Properties
 {
 
 

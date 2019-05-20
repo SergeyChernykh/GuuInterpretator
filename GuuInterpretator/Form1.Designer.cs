@@ -1,4 +1,4 @@
-﻿namespace GuuInterpretator
+﻿namespace GuuInterpreter 
 {
     partial class Form1
     {

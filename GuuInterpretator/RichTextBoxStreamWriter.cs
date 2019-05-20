@@ -3,7 +3,7 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 
-namespace GuuInterpretator
+namespace GuuInterpreter 
 {
     public class TextBoxStreamWriter : TextWriter
     {
