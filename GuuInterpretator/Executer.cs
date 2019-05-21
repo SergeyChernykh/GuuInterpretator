@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace GuuInterpreter 
 {
-    class Executer : IDisposable
+    public class Executer : IDisposable
     {
         InnerView mInnerView;
         Stack<StackTraceItem> mStackTrace;
@@ -118,15 +118,21 @@ namespace GuuInterpreter
         private void ExecuteSet(Instruction inst)
         {
             SetInst setInst = (SetInst)inst;
-            mInnerView.Variables[setInst.Variable] = setInst.Value;
+            mInnerView.Variables[setInst.Variable].Init = true;
+            mInnerView.Variables[setInst.Variable].Value = setInst.Value;
+          
         }
 
         //выполнение инструкции print
         private void ExecutePrint(Instruction inst)
         {
             PrintInst printInst = (PrintInst)inst;
-            mOutputMessage.Output += printInst.Variable
-                + "=" + mInnerView.Variables[printInst.Variable] + "\n";
+            if (mInnerView.Variables[printInst.Variable].Init)
+                mOutputMessage.Output += printInst.Variable
+                + "=" + mInnerView.Variables[printInst.Variable].Value + "\n";
+            else
+                throw new Exception($"Variable {printInst.Variable} isn't initialize");
+           
         }
 
         //выполнение текущей инструкции
@@ -151,14 +157,16 @@ namespace GuuInterpreter
                 mCurrentInstNo++;
 
                 
-                if (mInnerView.Functions[mCurrentFunc].Length <= mCurrentInstNo)
+                while (mInnerView.Functions[mCurrentFunc].Length <= mCurrentInstNo)
                 {
+
                     //последняя инструкция функции выполнена
                     if (mStackTrace.Count != 1)
                     {
                         //возвращение из функции
                         mCurrentInstNo = mStackTrace.Pop().InstNo + 1;
                         mCurrentFunc = mStackTrace.Peek().FuncName;
+                        
                     }
                     else
                     {

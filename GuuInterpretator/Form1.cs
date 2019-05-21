@@ -18,7 +18,7 @@ namespace GuuInterpreter
     {
         CancellationTokenSource TokenSource;
         Executer Executer;
-        Style lineStyle = new TextStyle(Brushes.Black, Brushes.Green, FontStyle.Bold);
+        Style lineStyle = new TextStyle(Brushes.Black, Brushes.Yellow, FontStyle.Bold);
         Range PreviusRange;
 
         public Form1()
@@ -30,6 +30,8 @@ namespace GuuInterpreter
         private async void RunButton_Click(object sender, EventArgs e)
         {
             OutputRichTextBox.Clear();
+            VariablesRichTextBox.Clear();
+            StackTraceRichTextBox.Clear();
             try
             {
                 

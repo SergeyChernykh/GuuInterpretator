@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GuuInterpreter 
 {
 
-    enum LexTypes
+    public enum LexTypes
     {
         SUB,
         SET,
@@ -19,7 +19,7 @@ namespace GuuInterpreter
         ENDLINE
     }
 
-    class Lex
+    public class Lex
     {
         public LexTypes Type { get; set; }
         public string Value { get; set; }
@@ -31,7 +31,7 @@ namespace GuuInterpreter
         }
     }
 
-    class Lexer
+    public class Lexer
     {
         //хранение исходного текста по словам
         private string[][] mSourseCodeByWord;
@@ -56,6 +56,7 @@ namespace GuuInterpreter
             mCurrentString = 0;
         }
 
+        //полечение лексемы
         public Lex GetLex()
         {
             Lex lex = GetNewLex();
@@ -70,6 +71,7 @@ namespace GuuInterpreter
             return lex;
         }
 
+        //построение лексемы и проверка условий
         private Lex GetNewLex()
         {
             if (mSourseCodeByWord == null)
@@ -107,6 +109,7 @@ namespace GuuInterpreter
             return lex;
         }
 
+        //построение лексемы по слову
         private Lex BuildNewLex()
         {
             Lex lex = new Lex();
@@ -149,6 +152,7 @@ namespace GuuInterpreter
             return lex;
         }
 
+        //является ли слово идентификатором
         private bool isIdent(string word)
         {
             if (String.IsNullOrEmpty(word))
@@ -169,6 +173,7 @@ namespace GuuInterpreter
             return true;
         }
 
+        //является ли слово числом
         private bool isDigit(string word)
         {
             int n = 0;

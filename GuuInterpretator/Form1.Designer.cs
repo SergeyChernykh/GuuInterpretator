@@ -206,6 +206,7 @@
             this.SourceCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.SourceCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.SourceCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SourceCodeFastColoredTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.SourceCodeFastColoredTextBox.IsReplaceMode = false;
             this.SourceCodeFastColoredTextBox.Location = new System.Drawing.Point(0, 0);
             this.SourceCodeFastColoredTextBox.Name = "SourceCodeFastColoredTextBox";
@@ -366,7 +367,7 @@
             this.ClientSize = new System.Drawing.Size(800, 442);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Form1";
-            this.Text = "GuuInterpretator";
+            this.Text = "GuuInterpreter";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);

@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace GuuInterpreter 
 {
+
+    public class Variable
+    {
+        public int Value { get; set; }
+        public bool Init { get; set; }
+    }
+
     public enum InstType
     {
         CALL,

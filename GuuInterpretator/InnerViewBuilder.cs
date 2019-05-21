@@ -8,17 +8,17 @@ namespace GuuInterpreter
 {
     public class InnerView
     {
-        public Dictionary<string, int> Variables { get; set; }
+        public Dictionary<string, Variable> Variables { get; set; }
         public Dictionary<string, Instruction[]> Functions { get; set; }
 
         public InnerView()
         {
-            Variables = new Dictionary<string, int>();
+            Variables = new Dictionary<string, Variable>();
             Functions = new Dictionary<string, Instruction[]>();
         }
     }
 
-    class InnerViewBuilder
+     public class InnerViewBuilder
     {
         //объект выдающий лексемы
         private Lexer mLexer;
@@ -136,7 +136,7 @@ namespace GuuInterpreter
 
             if (!mInnerView.Variables.ContainsKey(varName))
             {
-                mInnerView.Variables.Add(varName,0);
+                mInnerView.Variables.Add(varName,new Variable { Init = false});
                 if (ExpectToDefVars.Contains(varName))
                     ExpectToDefVars.Remove(varName);
             }
@@ -202,7 +202,7 @@ namespace GuuInterpreter
                 else
                     type = "Variable(s)";
                 throw new Exception(type + ": " + names
-                    + "doesn't(don't) exist in current context.");
+                    + " doesn't(don't) exist in current context.");
             }
         }
 
